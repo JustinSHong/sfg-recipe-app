@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 
 @Entity
 public class Ingredient {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +24,15 @@ public class Ingredient {
 
     @ManyToOne // inverse relationship
     private Recipe recipe; // don't want to cascade here to influence parent objects
+
+    public Ingredient() {
+    }
+
+    public Ingredient(String description, BigDecimal amount, UnitOfMeasure uom) {
+        this.description = description;
+        this.amount = amount;
+        this.uom = uom;
+    }
 
     public Long getId() {
         return id;
