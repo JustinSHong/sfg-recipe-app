@@ -137,13 +137,31 @@ public class DataLoader implements CommandLineRunner {
 //        guacamoleRecipe.setNotes();
 
         // create spicy chicken taco recipe
-
+        Recipe tacosRecipe = new Recipe();
+        tacosRecipe.setDescription("Spicy Grilled Chicken Tacos");
+        tacosRecipe.setPrepTime(20);
+        tacosRecipe.setCookTime(15);
+        tacosRecipe.setServings(6);
+        tacosRecipe.setSource("");
+        tacosRecipe.setUrl("https://www.simplyrecipes.com/recipes/spicy_grilled_chicken_tacos/");
+        tacosRecipe.setDirections(
+                "1. Prepare a gas or charcoal grill for medium-high, direct heat.\n"
+                + "2. Make the marinade and coat the chicken: In a large bowl, stir together the chili powder, oregano, cumin, sugar, salt, garlic and orange zest. Stir in the orange juice and olive oil to make a loose paste. Add the chicken to the bowl and toss to coat all over.\n" +
+                        "\n" +
+                        "Set aside to marinate while the grill heats and you prepare the rest of the toppings."
+                + "3. 3 Grill the chicken: Grill the chicken for 3 to 4 minutes per side, or until a thermometer inserted into the thickest part of the meat registers 165F. Transfer to a plate and rest for 5 minutes.\n"
+                + "4. 4 Warm the tortillas: Place each tortilla on the grill or on a hot, dry skillet over medium-high heat. As soon as you see pockets of the air start to puff up in the tortilla, turn it with tongs and heat for a few seconds on the other side.\n" +
+                        "\n" +
+                        "Wrap warmed tortillas in a tea towel to keep them warm until serving.\n"
+                + "5. 5 Assemble the tacos: Slice the chicken into strips. On each tortilla, place a small handful of arugula. Top with chicken slices, sliced avocado, radishes, tomatoes, and onion slices. Drizzle with the thinned sour cream. Serve with lime wedges. \n"
+        );
+//        tacosRecipe.setIngredients();
+//        tacosRecipe.setImage();
+        tacosRecipe.setDifficulty(Difficulty.HARD);
+//        tacosRecipe.setNotes();
 
 
         // add recipes to the list of recipes
-
-
-
 
         return recipes;
     }
