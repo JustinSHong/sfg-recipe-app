@@ -17,10 +17,12 @@ public class Recipe {
     private Integer servings;
     private String source;
     private String url;
+
+    @Lob
     private String directions;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
-    private Set<Ingredient> ingredients;
+    private Set<Ingredient> ingredients = new HashSet<>();
 
     @Lob // large object annotation
     private Byte[] image; // Blob - binary large object
@@ -129,6 +131,14 @@ public class Recipe {
 
     public void setNotes(Notes notes) {
         this.notes = notes;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
     public Recipe addIngredient(Ingredient ingredient){
