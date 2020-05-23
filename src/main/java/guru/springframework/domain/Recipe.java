@@ -131,6 +131,7 @@ public class Recipe {
 
     public void setNotes(Notes notes) {
         this.notes = notes;
+        notes.setRecipe(this); // build association between notes and recipe inside the class
     }
 
     public Set<Category> getCategories() {
@@ -142,7 +143,7 @@ public class Recipe {
     }
 
     public Recipe addIngredient(Ingredient ingredient){
-        ingredient.setRecipe(this);
+        ingredient.setRecipe(this); // associate recipe with ingredients
         this.ingredients.add(ingredient);
         return this;
     }
