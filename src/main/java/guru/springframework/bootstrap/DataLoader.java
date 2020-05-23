@@ -4,15 +4,18 @@ import guru.springframework.domain.*;
 import guru.springframework.repositories.CategoryRepository;
 import guru.springframework.repositories.RecipeRepository;
 import guru.springframework.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -27,12 +30,15 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     @Override
+    @Transactional // load lazily in same transaction context
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         List<Recipe> recipes = getRecipes();
         recipeRepository.saveAll(recipes); // save the recipes we pre-defined
     }
 
     private List<Recipe> getRecipes() {
+        log.debug("***** BOOT STRAPPING RECIPES *****");
+
         List<Recipe> recipes = new ArrayList<>(2);
 
         // check units of measure are present in the database
@@ -77,6 +83,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         }
 
         // get optionals
+        log.debug("***** FETCHING ALL UNIT OF MEASURE OPTIONALS *****");
         UnitOfMeasure teaSpoonUom = teaSpoonOptional.get();
         UnitOfMeasure tableSpoonUom = tableSpoonOptional.get();
         UnitOfMeasure cupUom = cupOptional.get();
@@ -106,10 +113,13 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         }
 
         // get categories
+        log.debug("***** FETCHING ALL CATEGORY OPTIONALS *****");
+
         Category americanCategory = americanCategoryOptional.get();
         Category mexicanCategory = mexicanCategoryOptional.get();
 
         // create guacamole recipe
+        log.debug("***** CREATING GUAC RECIPE *****");
         Recipe guacamoleRecipe = new Recipe();
         guacamoleRecipe.setDescription("Perfect Guacamole");
         guacamoleRecipe.setPrepTime(10);
@@ -151,13 +161,16 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         guacamoleRecipe.addIngredient(new Ingredient("ripe tomato, seeds and pulp removed, chopped", new BigDecimal(".5"), eachUom));
 
         // add categories
+        log.debug("***** ADDING CATEGORIES FOR GUACAMOLE RECIPE *****");
         guacamoleRecipe.getCategories().add(americanCategory);
         guacamoleRecipe.getCategories().add(mexicanCategory);
 
         // add to recipes
+        log.debug("***** ADDING GUACAMOLE RECIPE *****");
         recipes.add(guacamoleRecipe);
 
         // create spicy chicken taco recipe
+        log.debug("***** CREATING CHICKEN TACO RECIPE *****");
         Recipe tacosRecipe = new Recipe();
         tacosRecipe.setDescription("Spicy Grilled Chicken Tacos");
         tacosRecipe.setPrepTime(20);
@@ -212,10 +225,12 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         tacosRecipe.addIngredient(new Ingredient("lime, cut into wedges", new BigDecimal(4), eachUom));
 
         // add categories
+        log.debug("***** ADDING CATEGORIES TO TACOS RECIPE *****");
         tacosRecipe.getCategories().add(americanCategory);
         tacosRecipe.getCategories().add(mexicanCategory);
 
         // add recipes to the list of recipes
+        log.debug("***** ADDING TACOS RECIPE *****");
         recipes.add(tacosRecipe);
 
         return recipes;

@@ -1,8 +1,15 @@
 package guru.springframework.domain;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.util.Set;
 
+@Data
+@EqualsAndHashCode(exclude = {"recipes"}) // override and add exclude property
+@ToString(exclude = {"recipes"})
 @Entity
 public class Category {
 
@@ -14,19 +21,4 @@ public class Category {
     @ManyToMany(mappedBy = "categories") // refers to categories property in Recipe
     private Set<Recipe> recipes;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }
