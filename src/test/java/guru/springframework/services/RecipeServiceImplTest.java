@@ -8,10 +8,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 public class RecipeServiceImplTest {
 
@@ -27,6 +29,22 @@ public class RecipeServiceImplTest {
 
         // initialize object and inject mocked dependency
         recipeService = new RecipeServiceImpl(recipeRepository);
+    }
+
+    @Test
+    public void getRecipeByIdTest() throws Exception {
+        // given
+        Recipe recipe = new Recipe();
+        recipe.setId(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe); // may or may not exist
+        // when
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+        // then
+        Recipe result = recipeService.findById(1L);
+
+        assertNotNull("Null recipe returned", result);
+        verify(recipeRepository).findById(anyLong());
+        verify(recipeRepository, never()).findAll();
     }
 
     @Test
