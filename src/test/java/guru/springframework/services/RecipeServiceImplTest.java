@@ -1,7 +1,10 @@
 package guru.springframework.services;
 
+import guru.springframework.converters.RecipeCommandToRecipe;
+import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Recipe;
 import guru.springframework.repositories.RecipeRepository;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,8 +15,11 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.util.AssertionErrors.assertNotNull;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RecipeServiceImplTest {
 
@@ -22,46 +28,51 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
     @Before
     public void setUp() throws Exception {
-        // initialize the mock --> recipeRepository
+        // INITIALIZE MOCKS
         MockitoAnnotations.initMocks(this);
 
-        // initialize object and inject mocked dependency
-        recipeService = new RecipeServiceImpl(recipeRepository);
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
 
     @Test
     public void getRecipeByIdTest() throws Exception {
-        // given
         Recipe recipe = new Recipe();
         recipe.setId(1L);
-        Optional<Recipe> recipeOptional = Optional.of(recipe); // may or may not exist
-        // when
-        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
-        // then
-        Recipe result = recipeService.findById(1L);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
 
-        assertNotNull("Null recipe returned", result);
-        verify(recipeRepository).findById(anyLong());
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        Recipe recipeReturned = recipeService.findById(1L);
+
+        Assert.assertNotNull("Null recipe returned", recipeReturned);
+        verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, never()).findAll();
     }
 
     @Test
-    public void getRecipes() {
-        // initialize a recipe and add it to the set
-        Recipe recipe = new Recipe();
-        HashSet recipesData = new HashSet();
-        recipesData.add(recipe);
+    public void getRecipesTest() throws Exception {
 
-        // when findAll() is invoked return recipesData
-        when(recipeRepository.findAll()).thenReturn(recipesData);
+        Recipe recipe = new Recipe();
+        HashSet receipesData = new HashSet();
+        receipesData.add(recipe);
+
+        when(recipeService.getRecipes()).thenReturn(receipesData);
 
         Set<Recipe> recipes = recipeService.getRecipes();
 
         assertEquals(recipes.size(), 1);
-        // test mock interaction
-        // findAll() should be called only 1 time
-        verify(recipeRepository, times(2)).findAll();
+
+        // VERIFY THE MOCKS ARE INTERACTING / PERFORMING CORRECTLY
+        verify(recipeRepository, times(1)).findAll();
+        verify(recipeRepository, never()).findById(anyLong());
     }
+
 }

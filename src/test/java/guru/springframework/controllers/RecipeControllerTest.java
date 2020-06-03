@@ -31,6 +31,7 @@ public class RecipeControllerTest {
 
     @Before
     public void setUp() {
+        // INITIALIZE MOCKS
         MockitoAnnotations.initMocks(this); // alternatively use injectMocks with JUnit5
         controller = new RecipeController(recipeService);
 
@@ -41,6 +42,7 @@ public class RecipeControllerTest {
     public void getRecipe() throws Exception {
         Recipe recipe = new Recipe();
         recipe.setId(1L);
+        // TELL THE MOCK WHAT TO RETURN
         when(recipeService.findById(anyLong())).thenReturn(recipe);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/recipe/show/1"))

@@ -17,9 +17,19 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+// SPRING MOCK MVC - gives you the ability to test controllers and unit test them
+    // bring in mock servlet context
+    // no need to bring a web server
+    // controller unit tests become much more light-weight
+    // webAppContextSetup() ---> brings up Spring context
+    // standaloneSetup() ---> unit tests for faster tests
+
 
 public class IndexControllerTest {
 
@@ -35,13 +45,13 @@ public class IndexControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-//        recipe = new Recipe();
         indexController = new IndexController(recipeService);
     }
 
     // RECOMMENDED WAY TO TEST CONTROLLERS - FAST, LIGHTWEIGHT
     @Test
     public void testMockMVC() throws Exception {
+        // INITIALIZE MOCKMVC
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(indexController).build(); // for fast unit tests
 
         // test status 200 and view name is index
@@ -64,6 +74,7 @@ public class IndexControllerTest {
 
         when(recipeService.getRecipes()).thenReturn(recipes);
 
+        // NEED TO VERIFY THE SET OF RECIPES RETURNED - can also use @Captor
         ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
 
         // WHEN
@@ -75,7 +86,9 @@ public class IndexControllerTest {
         // verify mocks interactions
         verify(recipeService, times(1)).getRecipes();
         // eq(value) ---> attribute should match value
+        // argumentCaptor.capture ---> captures whatever is passed in to the mock
         verify(model, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
+
         Set<Recipe> setInController = argumentCaptor.getValue();
 
         assertEquals(2, setInController.size());
