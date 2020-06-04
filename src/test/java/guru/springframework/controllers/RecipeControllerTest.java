@@ -4,6 +4,8 @@ import guru.springframework.domain.Recipe;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
@@ -11,9 +13,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -39,17 +46,36 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void getRecipe() throws Exception {
+    @DisplayName("Returns status 200 and returns recipe/recipeform view template")
+    public void shouldReturnStatusOkAndRecipeFormView() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/recipe/new"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/recipeform"))
+                .andExpect(model().attributeExists("recipe"));
+    }
+
+    @Test
+    @DisplayName("Returns a single recipe using the recipeService")
+    public void shouldGetASingleRecipe() throws Exception {
         Recipe recipe = new Recipe();
-        recipe.setId(1L);
+        recipe.setId(1l);
         // TELL THE MOCK WHAT TO RETURN
         when(recipeService.findById(anyLong())).thenReturn(recipe);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/recipe/show/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("recipe/show"));
+        ArgumentCaptor<Recipe> argumentCaptor = ArgumentCaptor.forClass(Recipe.class);
 
-        verify(recipeService).findById(anyLong());
+        String viewName = controller.showById("1", model);
+
+        assertEquals("recipe/show", viewName);
+
+        verify(recipeService, times(1)).findById(anyLong());
+        verify(model, times(1)).addAttribute(eq("recipe"), argumentCaptor.capture());
+
+        Recipe fetched = argumentCaptor.getValue();
+        System.out.println(fetched);
+
+        assertTrue(fetched instanceof Recipe);
+        assertEquals(1l, fetched.getId());
     }
 
 }

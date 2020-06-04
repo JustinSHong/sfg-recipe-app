@@ -33,15 +33,18 @@ public class RecipeController {
     // renders the form for creating a new recipe
     @RequestMapping("/recipe/new")
     public String createRecipe(Model model) {
+        log.debug("***** SHOWING RECIPE FORM ***** ");
+
         model.addAttribute("recipe", new RecipeCommand());
 
         return "recipe/recipeform";
     }
 
-    // request for creating a new recipe
     // @ModelAttribute bind the form post params to the recipe command object
     @PostMapping("recipe")
     public String saveOrUpdate(@ModelAttribute RecipeCommand command){
+        log.debug("***** SAVING/UPDATING RECIPE *****");
+
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
 
         // redirect to the single recipe's form page

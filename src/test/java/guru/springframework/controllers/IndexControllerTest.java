@@ -4,6 +4,7 @@ import guru.springframework.domain.Recipe;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -50,7 +51,8 @@ public class IndexControllerTest {
 
     // RECOMMENDED WAY TO TEST CONTROLLERS - FAST, LIGHTWEIGHT
     @Test
-    public void testMockMVC() throws Exception {
+    @DisplayName("Returns status 200 and returns index view")
+    public void shouldReturnStatusOkAndIndexView() throws Exception {
         // INITIALIZE MOCKMVC
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(indexController).build(); // for fast unit tests
 
@@ -61,7 +63,8 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void getIndexPage() {
+    @DisplayName("Returns recipes using the recipeService")
+    public void shouldReturnRecipes() {
         // GIVEN
         Set<Recipe> recipes = new HashSet<>();
         Recipe recipe1 = new Recipe();

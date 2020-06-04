@@ -1,23 +1,31 @@
 package guru.springframework.services;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//public class RecipeServiceIT {
-//
-//    public static final String NEW_DESCRIPTION = "New Description";
-//
-//    @Autowired
-//    RecipeService recipeService;
-//
-//    @Autowired
-//    RecipeRepository recipeRepository;
-//
-//    @Autowired
-//    RecipeCommandToRecipe recipeCommandToRecipe;
-//
-//    @Autowired
-//    RecipeToRecipeCommand recipeToRecipeCommand;
-//
+import guru.springframework.converters.RecipeCommandToRecipe;
+import guru.springframework.converters.RecipeToRecipeCommand;
+import guru.springframework.repositories.RecipeRepository;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class RecipeServiceIT {
+
+    public static final String NEW_DESCRIPTION = "New Description";
+
+    @Autowired
+    RecipeService recipeService;
+
+    @Autowired
+    RecipeRepository recipeRepository;
+
+    @Autowired
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
+    @Autowired
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
 //    @Transactional
 //    @Test
 //    public void testSaveOfDescription() throws Exception {
@@ -36,4 +44,4 @@ package guru.springframework.services;
 //        assertEquals(testRecipe.getCategories().size(), savedRecipeCommand.getCategories().size());
 //        assertEquals(testRecipe.getIngredients().size(), savedRecipeCommand.getIngredients().size());
 //    }
-//}
+}
