@@ -1,5 +1,6 @@
 package guru.springframework.controllers;
 
+import guru.springframework.commands.RecipeCommand;
 import guru.springframework.domain.Recipe;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -15,6 +17,7 @@ import org.springframework.ui.Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -48,7 +51,7 @@ public class RecipeControllerTest {
     @Test
     @DisplayName("Returns status 200 and returns recipe/recipeform view template")
     public void shouldReturnStatusOkAndRecipeFormView() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/recipe/new"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/recipe/new").param("id", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/recipeform"))
                 .andExpect(model().attributeExists("recipe"));
@@ -78,4 +81,34 @@ public class RecipeControllerTest {
         assertEquals(1l, fetched.getId());
     }
 
+    @Test
+    @DisplayName("Returns status 3xx and returns the recipe/{id}/show view template")
+    public void shouldReturnStatus3xxAndSingleRecipeView() throws Exception {
+        RecipeCommand command = new RecipeCommand();
+        command.setId(2l);
+
+        when(recipeService.saveRecipeCommand(any())).thenReturn(command);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/recipe/2/update")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", "2")
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/recipe/2/show"));
+    }
+
+    @Test
+    @DisplayName("Saves a single recipe using the recipe service")
+    public void shouldSaveASingleRecipe() throws Exception {
+        RecipeCommand command = new RecipeCommand();
+        command.setId(3l);
+
+        when(recipeService.saveRecipeCommand(any())).thenReturn(command);
+
+        String viewName = controller.saveOrUpdate(command);
+
+        assertEquals("redirect:/recipe/3/show", viewName);
+
+        verify(recipeService, times(1)).saveRecipeCommand(command);
+    }
 }

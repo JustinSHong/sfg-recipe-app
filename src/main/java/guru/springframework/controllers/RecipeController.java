@@ -21,7 +21,7 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @RequestMapping("/recipe/show/{id}")
+    @RequestMapping("/recipe/{id}/show")
     public String showById(@PathVariable String id, Model model) {
         log.debug("***** FETCHING A RECIPE *****");
 
@@ -41,13 +41,13 @@ public class RecipeController {
     }
 
     // @ModelAttribute bind the form post params to the recipe command object
-    @PostMapping("recipe")
+    @PostMapping("recipe/{id}/update")
     public String saveOrUpdate(@ModelAttribute RecipeCommand command){
         log.debug("***** SAVING/UPDATING RECIPE *****");
 
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
 
         // redirect to the single recipe's form page
-        return "redirect:/recipe/show/" + savedCommand.getId();
+        return "redirect:/recipe/" + savedCommand.getId() + "/show";
     }
 }
