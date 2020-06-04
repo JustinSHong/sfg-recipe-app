@@ -91,7 +91,7 @@ public class RecipeControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/recipe/2/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("id", "2")
+                .param("id", "")
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/2/show"));
@@ -110,5 +110,19 @@ public class RecipeControllerTest {
         assertEquals("redirect:/recipe/3/show", viewName);
 
         verify(recipeService, times(1)).saveRecipeCommand(command);
+    }
+
+    @Test
+    @DisplayName("Returns status 200 and returns the recipe/recipeform view template")
+    public void shouldReturnStatusOkAndRecipeView() throws Exception {
+        RecipeCommand command = new RecipeCommand();
+        command.setId(4l);
+
+        when(recipeService.findCommandById(anyLong())).thenReturn(command);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/recipe/4/update"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/recipeform"))
+                .andExpect(model().attributeExists("recipe"));
     }
 }
