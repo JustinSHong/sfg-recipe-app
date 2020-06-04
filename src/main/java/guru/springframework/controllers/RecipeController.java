@@ -40,6 +40,13 @@ public class RecipeController {
         return "recipe/recipeform";
     }
 
+    @RequestMapping("recipe/{id}/update")
+    public String updateRecipe(@PathVariable String id, Model model) {
+        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+
+        return "recipe/recipeform";
+    }
+
     // @ModelAttribute bind the form post params to the recipe command object
     @PostMapping("recipe/{id}/update")
     public String saveOrUpdate(@ModelAttribute RecipeCommand command){
@@ -50,4 +57,6 @@ public class RecipeController {
         // redirect to the single recipe's form page
         return "redirect:/recipe/" + savedCommand.getId() + "/show";
     }
+
+
 }
